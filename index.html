@@ -20,14 +20,22 @@
     <script src="/node_modules/@optimizely/optimizely-sdk/dist/optimizely.browser.umd.js"></script>
     <!-- <script src="./optimizely.browser.umd.js"></script> -->
     <script>
+
+        // 1. Initialize SDK
+        // 2. Create User
+        // 3. Fetch (Update) Segments <-- Done on Create
+        // 4. Decision
+
         const optimizely = optimizelySdk.createInstance({
             sdkKey: '4XLn6c6LsxMuYKVBLtaKp'
         })
 
+        let user
+
         optimizely.onReady().then(() => {
             console.log('Ready')
 
-            const user = optimizely.createUserContext(
+            user = optimizely.createUserContext(
                 'fs_user_01'
             )
 
@@ -38,6 +46,18 @@
                 console.log(promotionDecision)
             })
         })
+
+        // user.sendOdpEvent('') <-- 
+
+        /**
+         * 
+         
+         function sendOdpEvent(vuid ?) { 
+            get 'optimizely-vuid' from local storage
+            Zaius SDK Call 
+         }
+            
+         */
     </script>
 </body>
 

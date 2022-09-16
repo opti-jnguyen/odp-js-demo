@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ODP Demo - FS JS SDK</title>
+</head>
+
+<body>
+    <div id="local-datafile">
+        Local Datafile
+    </div>
+
+    <div id="odp">
+        ODP Qualified
+    </div>
+
+    <script src="/node_modules/@optimizely/optimizely-sdk/dist/optimizely.browser.umd.js"></script>
+    <!-- <script src="./optimizely.browser.umd.js"></script> -->
+    <script>
+        const optimizely = optimizelySdk.createInstance({
+            sdkKey: '4XLn6c6LsxMuYKVBLtaKp'
+        })
+
+        optimizely.onReady().then(() => {
+            console.log('Ready')
+
+            const user = optimizely.createUserContext(
+                'fs_user_01'
+            )
+
+            user.fetchQualifiedSegments().then(() => {
+                console.log('Segments fetched!')
+
+                const promotionDecision = user.decide('promotion')
+                console.log(promotionDecision)
+            })
+        })
+    </script>
+</body>
+
+</html>

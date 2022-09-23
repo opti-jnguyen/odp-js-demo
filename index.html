@@ -32,32 +32,38 @@
 
         let user
 
-        optimizely.onReady().then(() => {
+        optimizely.onReady().then(async () => {
             console.log('Ready')
 
             user = optimizely.createUserContext(
-                'fs_user_01'
+                // 'fs_user_01'
             )
 
-            user.fetchQualifiedSegments().then(() => {
-                console.log('Segments fetched!')
+            const vuid = await user.getUserIdOdp()
+            console.log(`VUID: ${vuid}`)
 
-                const promotionDecision = user.decide('promotion')
-                console.log(promotionDecision)
-            })
+            await user.fetchQualifiedSegments()
+            console.log('Segments fetched!')
+
+            const promotionDecision = user.decide('promotion')
+            console.log(promotionDecision)
+
+            const events = [
+                {
+                    type: 'type-a',
+                    action: 'action-a',
+                    identifiers: {
+                        'identifier-1': 'value-1',
+                        'identifier-2': 'value-2'
+                    },
+                    data: {
+                        'foo': 'bar'
+                    }
+                }
+            ]
+
+            user.sendOdpEvents(events)
         })
-
-        // user.sendOdpEvent('') <-- 
-
-        /**
-         * 
-         
-         function sendOdpEvent(vuid ?) { 
-            get 'optimizely-vuid' from local storage
-            Zaius SDK Call 
-         }
-            
-         */
     </script>
 </body>
 

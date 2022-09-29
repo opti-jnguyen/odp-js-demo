@@ -10,11 +10,13 @@
 
 <body>
     <div id="local-datafile">
-        Local Datafile
+        <h3>Local Datafile</h3>
+        <code id="datafileCode"></code>
     </div>
 
     <div id="odp">
-        ODP Qualified
+        <h3>ODP Qualified</h3>
+        <code id="odpCode"></code>
     </div>
 
     <script src="/node_modules/@optimizely/optimizely-sdk/dist/optimizely.browser.umd.js"></script>
@@ -33,36 +35,58 @@
         let user
 
         optimizely.onReady().then(async () => {
-            console.log('Ready')
+            console.log('=== Optimizely Ready ===')
 
-            user = optimizely.createUserContext(
-                // 'fs_user_01'
-            )
-
-            const vuid = await user.getUserIdOdp()
-            console.log(`VUID: ${vuid}`)
-
-            await user.fetchQualifiedSegments()
-            console.log('Segments fetched!')
-
-            const promotionDecision = user.decide('promotion')
-            console.log(promotionDecision)
-
-            const events = [
+            const initEvents = [
                 {
-                    type: 'type-a',
-                    action: 'action-a',
+                    type: 'fullstack',
+                    action: 'client_initialized',
                     identifiers: {
-                        'identifier-1': 'value-1',
-                        'identifier-2': 'value-2'
+                        'vuid': 'vuid_f9835093fc474af3828ccd27823',
                     },
                     data: {
-                        'foo': 'bar'
+                        source: 'javascript-sdk'
                     }
                 }
             ]
 
-            user.sendOdpEvents(events)
+            const sendInitEventSuccess = await optimizely.sendOdpEvents(initEvents)
+            console.log(`Init Event send ${sendInitEventSuccess ? 'success!' : 'failed!'}`)
+
+            user = optimizely.createUserContext(
+                'test_user_01',
+                {
+                    'favorite_color': 'red'
+                }
+            )
+
+            const userId = await user.getUserIdOdp()
+            console.log(`> userId (fs_user_id / vuid): ${userId}`)
+
+            const events = [
+                {
+                    type: 'fullstack',
+                    action: 'identified',
+                    identifiers: {
+                        'email': 'john.nguyen@optimizely.com',
+                        'vuid': 'vuid_f9835093fc474af3828ccd27823',
+                        // 'fs_user_id': 'test_user_01'
+                    },
+                    data: {
+                        source: 'javascript-sdk'
+                    }
+                }
+            ]
+
+            const sendEventSuccess = await optimizely.sendOdpEvents(events)
+            console.log(`ID Event send ${sendEventSuccess ? 'success!' : 'failed!'}`)
+
+            await user.fetchQualifiedSegments()
+            console.log('> Segments fetched!')
+
+            const promotionDecision = user.decide('promotion')
+            console.log(promotionDecision)
+
         })
     </script>
 </body>
